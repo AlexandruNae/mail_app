@@ -32,6 +32,7 @@ class Lecture(db.Model):
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255), nullable=False)
     chunks = db.Column(db.Integer, nullable=False)
+    alias = db.Column(db.String(255), nullable=False)
     id_category = db.Column(db.Integer, db.ForeignKey('lecture_category.id'), nullable=False)
 
     # Relationships

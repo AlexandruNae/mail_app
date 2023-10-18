@@ -8,6 +8,7 @@ from src.main import update_send
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from web.models import Lecture, LectureCategory, User, Subscription
+from main import send_email
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -91,6 +92,32 @@ def lecture(book_id):
         return render_template('lecture.html', book_id=book_id)
 
     return render_template('lecture.html', book_id=book_id)
+
+
+@app.route('/send_next_chunk/<user_email>/<alias>', methods=['GET'])
+def send_next_chunk(user_email, alias):
+    # Fetch the current_chunk for this user and this book from the database
+    user = User.query.filter_by(email=user_email).first()
+    lecture = Lecture.query.filter_by(alias=alias).first()
+
+    if not user or not lecture:
+        return "User or book not found!", 404
+
+    subscription = Subscription.query.filter_by(id_user=user.id, id_lecture=lecture.id).first()
+
+    if not subscription:
+        return "User or book not found!", 404
+
+    current_chunk = subscription.current_chunk
+
+    # Update the current_chunk in the database
+    subscription.current_chunk = current_chunk + 1
+    db.session.commit()
+
+    # Send an email with the new chunk
+    send_email(user.email, lecture.title, current_chunk + 1)
+
+    return "Next chunk sent!"
 
 
 if __name__ == '__main__':
