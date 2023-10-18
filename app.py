@@ -7,7 +7,6 @@ import os
 from src.main import update_send
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
-
 from web.models import Lecture, LectureCategory, User, Subscription
 
 app = Flask(__name__)
@@ -17,24 +16,6 @@ db.init_app(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-
-        email = request.form['email']
-
-        # Initialize or load DataFrame
-        if os.path.exists("docs/user_track.csv"):
-            df = pd.read_csv("docs/user_track.csv")
-        else:
-            df = pd.DataFrame(columns=['Email', 'LastPage'])
-
-        # Add new email with LastPage as 0
-        new_row = pd.DataFrame({'Email': [email], 'LastPage': [0]})
-        df = pd.concat([df, new_row], ignore_index=True)
-
-        # Save DataFrame to CSV
-        df.to_csv("docs/user_track.csv", index=False)
-        update_send()
-        return "Email added successfully!"
 
     lecture_categories = LectureCategory.query.all()
     category_names = {category.name: category.id for category in lecture_categories}
