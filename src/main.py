@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 def update_send():
     # Initialize or load DataFrame
     try:
-        df = pd.read_csv("docs/user_track.csv")
+        df = pd.read_csv("../docs/user_track.csv")
     except FileNotFoundError:
         df = pd.DataFrame(columns=['Email', 'LastPage'])
 
@@ -23,7 +23,6 @@ def update_send():
         8: "Page 8 content",
         9: "Page 9 content"
     }
-
 
     def send_email(user_email, pages):
         # SMTP settings
