@@ -8,7 +8,7 @@ from src.main import update_send
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from web.models import Lecture, LectureCategory, User, Subscription
-from main import send_email
+from src.main import send_email
 
 app = Flask(__name__)
 app.config.from_object('config')
