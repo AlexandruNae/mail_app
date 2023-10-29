@@ -7,37 +7,20 @@
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
+<!--    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com/">
 
-    <script src="//unpkg.com/alpinejs" defer=""></script>
-    <script src="https://unpkg.com/htmx.org@1.9.2"
-            integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
-            crossorigin="anonymous"></script>
-    <script defer="" data-domain="modernserial.com" src="https://plausible.io/js/script.manual.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=fallback">-->
+
 
     <script>window.plausible = window.plausible || function () {
         (window.plausible.q = window.plausible.q || []).push(arguments)
     }</script>
-
-    <!-- trigger pageview -->
-    <script>
-        function prepareUrl(params) {
-            const url = new URL(location.href)
-            const queryParams = new URLSearchParams(location.search)
-            let customUrl = url.protocol + "//" + url.hostname + url.pathname.replace(/\/$/, '')
-            for (const paramName of params) {
-                let paramValue = queryParams.get(paramName)
-                if (paramValue) {
-                    paramValue = paramValue.replace(/ /g, '+').toLocaleLowerCase()
-                    customUrl = customUrl + '/' + paramName + '/' + paramValue
-                }
-            }
-            return customUrl
-        }
-
-        plausible('pageview', {u: prepareUrl(["search", "genre", "page", "order_by", "order_sign", "error_message"])})
-    </script>
-
 
     <meta property="og:title" content="Micro Lecturi">
     <meta property="og:description" content="Read classic books as email newsletters.">
@@ -45,21 +28,8 @@
           content="https://modernserial.s3.us-west-1.amazonaws.com/images/a-a-a-a-buncha-static-images/default-og-image.png">
     <meta property="og:url" content="https://modernserial.com/books/">
     <meta property="og:type" content="website">
-
-
     <meta name="twitter:card" content="summary_large_image">
-    <style>                      .htmx-indicator {
-        opacity: 0;
-        transition: opacity 200ms ease-in;
-    }
 
-    .htmx-request .htmx-indicator {
-        opacity: 1
-    }
-
-    .htmx-request.htmx-indicator {
-        opacity: 1
-    }                    </style>
 </head>
 
 <body class="flex flex-col h-screen justify-between">
@@ -68,7 +38,54 @@
 <header class="absolute inset-x-0 top-0 z-30 bg-amber-50">
     <nav class="flex mx-auto items-center justify-between p-3 gap-4 md:gap-8 lg:px-8" aria-label="Global">
         <a href="/" class="-m-1.5 p-1.5 sm:flex-1">
-            <span class="h8 font-sans text-lg sm:text-xl font-semibold">Micro Lecturi</span>
+            <span class="h8 font-sans text-lg sm:text-xl font-semibold">
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+                     width="322.000000pt" height="43.000000pt" viewBox="0 0 322.000000 43.000000"
+                     preserveAspectRatio="xMidYMid meet" style="zoom: 60%">
+
+                <g transform="translate(0.000000,43.000000) scale(0.100000,-0.100000)"
+                   fill="#000000" stroke="none">
+                <path d="M191 293 c-5 -21 -19 -76 -31 -123 -12 -47 -23 -93 -26 -102 -4 -12
+                0 -18 10 -18 15 0 24 24 47 127 14 63 20 57 45 -50 10 -42 21 -74 25 -70 3 5
+                14 42 24 83 10 41 21 79 25 83 3 4 12 -16 19 -46 22 -99 32 -127 45 -127 10 0
+                5 34 -21 140 -20 77 -39 140 -43 140 -4 0 -15 -36 -25 -80 -10 -44 -21 -80
+                -25 -80 -4 0 -15 36 -25 80 -10 44 -22 80 -26 80 -5 0 -13 -17 -18 -37z"/>
+                <path d="M490 190 c0 -118 2 -140 15 -140 13 0 15 22 15 140 0 118 -2 140 -15
+                140 -13 0 -15 -22 -15 -140z"/>
+                <path d="M689 306 c-88 -60 -76 -191 23 -242 35 -18 68 -18 68 1 0 9 -9 15
+                -24 15 -53 0 -110 76 -99 133 7 36 55 84 93 92 16 4 30 11 30 16 0 18 -56 9
+                -91 -15z"/>
+                <path d="M880 190 c0 -118 2 -140 15 -140 11 0 15 12 16 48 0 41 2 44 12 27 7
+                -10 25 -33 41 -50 38 -39 48 -17 12 26 -32 38 -32 42 -1 73 36 36 34 88 -4
+                127 -20 19 -40 29 -60 29 l-31 0 0 -140z m72 93 c24 -21 23 -68 -2 -93 -33
+                -33 -40 -24 -40 45 0 69 8 79 42 48z"/>
+                <path d="M1159 306 c-88 -60 -76 -191 23 -242 114 -59 243 80 183 197 -36 69
+                -138 91 -206 45z m126 -12 c57 -27 83 -86 61 -139 -30 -71 -114 -98 -171 -53
+                -73 57 -62 158 20 194 39 17 51 17 90 -2z"/>
+                <path d="M1650 190 l0 -140 65 0 c51 0 65 3 65 15 0 11 -12 15 -50 15 l-50 0
+                0 125 c0 104 -2 125 -15 125 -13 0 -15 -22 -15 -140z"/>
+                <path d="M1880 190 l0 -140 65 0 c51 0 65 3 65 15 0 11 -12 15 -50 15 l-50 0
+                0 75 0 75 35 0 c24 0 35 5 35 15 0 11 -11 15 -36 15 -31 0 -35 3 -32 23 3 19
+                10 22 51 25 71 5 57 22 -18 22 l-65 0 0 -140z"/>
+                <path d="M2149 306 c-88 -60 -76 -191 23 -242 35 -18 68 -18 68 1 0 9 -9 15
+                -24 15 -53 0 -110 76 -99 133 7 36 55 84 93 92 16 4 30 11 30 16 0 18 -56 9
+                -91 -15z"/>
+                <path d="M2320 320 c0 -5 11 -10 25 -10 l25 0 0 -130 c0 -109 2 -130 15 -130
+                13 0 15 21 15 130 l0 130 25 0 c14 0 25 5 25 10 0 6 -28 10 -65 10 -37 0 -65
+                -4 -65 -10z"/>
+                <path d="M2550 219 c0 -61 5 -119 11 -130 27 -51 109 -43 128 13 6 17 11 75
+                11 129 0 81 -3 99 -15 99 -12 0 -15 -19 -15 -109 0 -115 -9 -141 -49 -141 -35
+                0 -41 21 -41 137 0 94 -3 113 -15 113 -12 0 -15 -19 -15 -111z"/>
+                <path d="M2820 190 c0 -118 2 -140 15 -140 11 0 15 12 16 48 0 41 2 44 12 27
+                7 -10 25 -33 41 -50 38 -39 48 -17 12 26 -32 38 -32 42 -1 73 36 36 34 88 -4
+                127 -20 19 -40 29 -60 29 l-31 0 0 -140z m72 93 c24 -21 23 -68 -2 -93 -33
+                -33 -40 -24 -40 45 0 69 8 79 42 48z"/>
+                <path d="M3050 190 c0 -118 2 -140 15 -140 13 0 15 22 15 140 0 118 -2 140
+                -15 140 -13 0 -15 -22 -15 -140z"/>
+                </g>
+                </svg>
+
+            </span>
         </a>
         <!--        <div class="hidden sm:flex gap-x-6 md:gap-x-12">-->
         <!--            <a href="/books" class="text-sm font-semibold leading-6 text-gray-900 hover:text-red-500">-->
@@ -102,12 +119,12 @@
 <div class="mb-auto grow" style="background-image: url('{{ url_for('static', filename='img/background.png') }}');">
 
     <div class="pt-24 pb-2 px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                Citeste pentru BAC direct pe email 📚
+        <div class="mx-auto max-w-3xl text-center">
+            <h2 class="text-4xl font-bold tracking-tight heading-font text-gray-900 sm:text-4xl">
+                Citește pentru BAC direct pe mail 📚
             </h2>
             <p class="mt-6 text-lg leading-8 text-gray-600">
-                Lecturile pentru BAC, putin cate putin 📎. Le primesti pe mail 🚀. Citesti in metrou 📖
+                Lecturile pentru BAC, puțin câte puțin 📎 Le primești pe mail 🚀 Citești în metrou 📖
             </p>
         </div>
     </div>
@@ -128,7 +145,7 @@
                         <!-- todo add hidden label -->
                         <input name="search" id="search-bar" type="text"
                                class="h-12 border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm w-full"
-                               placeholder="Cauta dupa autor sau titlu..." role="combobox" aria-expanded="false"
+                               placeholder="Caută după autor sau titlu..." role="combobox" aria-expanded="false"
                                aria-controls="options" value="{{ query }}">
                     </div>
                 </div>
@@ -141,25 +158,24 @@
                     </a>
                     <button type="submit"
                             class="rounded-md bg-red-400 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                        Search
+                        Caută
                     </button>
                 </div>
                 {% if no_results %}
                 <p class="text-center text-gray-500 pb-4">Nu am putut gasi nicio lectura care sa corespunda cautarii
-                    respective. Ne
-                    pare rau!</p>
+                    respective. Ne pare rau!</p>
                 {% endif %}
                 {% else %}
                 <div class="py-6 mx-auto max-w-md md:max-w-xl transform divide-y divide-gray-100 overflow-hidden transition-all flex content-center justify-center gap-8">
                     <button type="submit"
                             class="rounded-md bg-red-400 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                        Search
+                        Caută
                     </button>
                 </div>
                 {% endif %}
             </div>
         </div>
-                <div class="flex justify-center items-center pb-4 pt-4 gap-x-2">
+        <div class="flex justify-center items-center pb-4 pt-4 gap-x-2">
             <span class="text-xs sm:text-lg text-gray-900">Genuri 🌵 </span>
 
 
@@ -201,7 +217,6 @@
 
     <!--  book list  -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-
 
 
         <ul role="list"

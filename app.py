@@ -61,37 +61,41 @@ def search_lectures():
 
 @app.route('/lecture/<book_id>', methods=['GET', 'POST'])
 def lecture(book_id):
+    # Fetch the lecture object from the database
+    current_lecture = db.session.query(Lecture).filter_by(id=book_id).first()
+
+    # Ensure that the lecture exists
+    if not current_lecture:
+        # Handle this case, maybe redirect to a 404 page or display an error
+        return "Lecture not found", 404
+
     if request.method == 'POST':
-        if request.method == 'POST':
-            email = request.form['email']
+        email = request.form['email']
 
-            existing_user = db.session.query(User).filter_by(email=email).first()
+        existing_user = db.session.query(User).filter_by(email=email).first()
 
-            # If user does not exist, create one
-            if existing_user is None:
-                new_user = User(email=email, enabled=True)
-                db.session.add(new_user)
-                db.session.commit()
-                user_id = new_user.id
-            else:
-                user_id = existing_user.id
+        # If user does not exist, create one
+        if existing_user is None:
+            new_user = User(email=email, enabled=True)
+            db.session.add(new_user)
+            db.session.commit()
+            user_id = new_user.id
+        else:
+            user_id = existing_user.id
 
-            # Check for existing subscription for this user and this book
-            existing_subscription = db.session.query(Subscription).filter_by(id_user=user_id,
-                                                                             id_lecture=book_id).first()
+        # Check for existing subscription for this user and this book
+        existing_subscription = db.session.query(Subscription).filter_by(id_user=user_id, id_lecture=book_id).first()
 
-            if existing_subscription is None:
-                # Add subscription to the 'subscription' table
-                new_subscription = Subscription(id_user=user_id, id_lecture=book_id, start_date=datetime.now(),
-                                                current_chunk=0, is_active=True)
-                db.session.add(new_subscription)
-                db.session.commit()
+        if existing_subscription is None:
+            # Add subscription to the 'subscription' table
+            new_subscription = Subscription(id_user=user_id, id_lecture=book_id, start_date=datetime.now(),
+                                            current_chunk=0, is_active=True)
+            db.session.add(new_subscription)
+            db.session.commit()
 
-            return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    return render_template('lecture.html', book_id=book_id, lecture=current_lecture)
 
-        return render_template('lecture.html', book_id=book_id)
-
-    return render_template('lecture.html', book_id=book_id)
 
 
 @app.route('/send_next_chunk/<user_email>/<alias>', methods=['GET'])
