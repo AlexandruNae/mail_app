@@ -6,8 +6,7 @@ itsdangerous==2.1.2
 Jinja2==3.1.2
 jsonpatch
 jsonpointer==2.0
-libmambapy
-mamba
+
 MarkupSafe==2.1.3
 packaging
 pluggy
