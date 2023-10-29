@@ -12,6 +12,7 @@ MarkupSafe==2.1.3
 packaging
 pluggy
 pycosat
+pandas
 pycparser
 PyMySQL==1.1.0
 pyOpenSSL
