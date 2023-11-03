@@ -29,7 +29,7 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
 
             while len(char_buffer) >= char_limit:
                 # # Generate folder for each part
-                # part_folder = f'{book_folder}/{book_alias}_{file_count}'
+                # part_folder = f'{book_folder}/{book_title}_{file_count}'
                 # if not os.path.exists(part_folder):
                 #     os.makedirs(part_folder)
 
@@ -52,7 +52,16 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
 
 
 if __name__ == "__main__":
-    pdf_path = 'C:\\Users\\alexn\\PycharmProjects\\mail_app_scripts\\process_books\\book_pdf\\Harap_Alb_Ion_Creanga.pdf'  # Replace with your PDF path
+    # Assume the current working directory is 'mail_app_scripts'
+    # Construct the relative path to the PDF within the project directory
+    pdf_relative_path = os.path.join('book_pdf', 'Harap_Alb_Ion_Creanga.pdf')
+
+    # Get the absolute path of the current script (which is in 'mail_app_scripts')
+    project_directory = os.path.dirname(os.path.abspath(__file__))
+
+    # Combine the project directory with the relative path to get the full path to the PDF
+    pdf_path = os.path.join(project_directory, pdf_relative_path)
+
     book_alias = 'harap_alb'  # Replace with your book alias
     book_title = 'Harap-Alb'  # Replace with your book title
 

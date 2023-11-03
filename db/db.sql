@@ -24,7 +24,6 @@ CREATE TABLE `lecture` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(255) NOT NULL,
     `author` VARCHAR(255) NOT NULL,
-    `alias` VARCHAR(255) DEFAULT NULL,
     `description` VARCHAR(5000) NOT NULL, -- Added this line
     `chunks` INT NOT NULL,
     `id_category` INT NOT NULL,

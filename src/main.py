@@ -5,35 +5,70 @@ import pandas as pd
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
+from config import WEBSITE_URL
+from utils import title_to_alias
 
 # Create a SQLAlchemy engine
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
 
 
-def get_content(book_alias, chunk_number):
+def get_content(book_title, chunk_number):
+    book_alias = title_to_alias(book_title)
     with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
         return f.read()
 
 
-def send_email(user_email, book_alias, current_chunk):
+def send_email(user_email, book_title, current_chunk, subscription_id):
     # SMTP settings
     smtp_server = "smtp.gmail.com"
     smtp_port = 465
     smtp_user = "alexnaer@gmail.com"
     smtp_password = "aait colq xzma aaib"
 
-    # Create message
-    msg = MIMEMultipart()
+    # Retrieve the content for the current chunk of the book
+    content = get_content(book_title, current_chunk)
+
+    #Html new line
+    content = content.replace("\n", "<br>")
+
+    next_chunk_url = WEBSITE_URL +  "/send_next_chunk/" + str(subscription_id)
+
+    # Check if the next chunk exists
+    book_alias = title_to_alias(book_title)
+    next_chunk_path = f'lectures/{book_alias}/{book_alias}_{current_chunk + 1}.txt'
+    next_chunk_exists = os.path.isfile(next_chunk_path)
+
+    # Path to the email template
+    template_path = os.path.join('templates', 'email_template.html')
+
+    # Read the email template
+    with open(template_path, 'r') as template_file:
+        email_template = template_file.read()
+
+    # Replace placeholders in the template with actual content
+    # Ensure the placeholders in the template are formatted as {placeholder_name}
+    email_body = email_template.format(
+        book_title=book_title,
+        current_chunk=current_chunk,
+        content=content,
+        next_chunk_url=next_chunk_url,
+        website_url=WEBSITE_URL,
+        is_last_mail='inline-block' if next_chunk_exists else 'none',  # New placeholder for CSS display property
+        is_not_last_mail = 'none' if next_chunk_exists else 'inline-block'  # New placeholder for CSS display property
+    )
+
+    # Create the email message
+    msg = MIMEMultipart('alternative')
     msg['From'] = smtp_user
     msg['To'] = user_email
-    msg['Subject'] = f"Your book chunk for {book_alias}"
+    msg['Subject'] = f"{book_title} - Partea {current_chunk}"
 
-    text = get_content(book_alias, current_chunk)
-    # text = text + '\n\n\n\n' + f"Click here to get the next chunk: {next_chunk_url}"
-    msg.attach(MIMEText(text, 'plain'))
+    # Attach the HTML content
+    msg.attach(MIMEText(email_body, 'html'))
 
-
-    # Send email
+    # Send the email using SMTP
     with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
         server.login(smtp_user, smtp_password)
         server.sendmail(smtp_user, user_email, msg.as_string())
@@ -62,7 +97,7 @@ def update_send():
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
-            # lecture WHERE alias = '{book_alias}')"""
+            # lecture WHERE alias = '{book_title}')"""
 
             # Execute update query
             with engine.connect() as connection:

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{book_title} - Partea {current_chunk}</title>
+    <style>
+        body {{
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }}
+        .content {{
+            background-color: #fff;
+            padding: 20px;
+            margin: 10px;
+        }}
+        .btn:hover {{
+            background-color: rgb(220, 38, 38); /* Slightly darker red on hover */
+        }}
+    </style>
+</head>
+<body>
+<div class="content">
+    <h2>{book_title} - Partea {current_chunk}</h2>
+    <p>{content}</p>
+    <a href="{next_chunk_url}"
+       style="display: {is_last_mail}; padding: 10px 20px; margin: 20px 0; background-color: #ef4444; color: white; text-decoration: none; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+       class="btn">
+        Next Chunk
+    </a>
+    <div style="display: {is_not_last_mail};">
+        <p>Felicitări! Ați finalizat de citit lectura {book_title}.</p>
+    </div>
+    <br>
+    <a href="{website_url}"
+       style="display: {is_not_last_mail}; padding: 10px 20px; margin: 20px 0; background-color: #ef4444; color: white; text-decoration: none; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+       class="btn">
+        Micro lecturi
+    </a>
+</div>
+</body>
+</html>

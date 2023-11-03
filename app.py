@@ -66,12 +66,12 @@ def lecture(book_id):
 
     # Ensure that the lecture exists
     if not current_lecture:
-        # Handle this case, maybe redirect to a 404 page or display an error
         return "Lecture not found", 404
+
+    message = ""  # Initialize an empty message
 
     if request.method == 'POST':
         email = request.form['email']
-
         existing_user = db.session.query(User).filter_by(email=email).first()
 
         # If user does not exist, create one
@@ -83,45 +83,64 @@ def lecture(book_id):
         else:
             user_id = existing_user.id
 
-        # Check for existing subscription for this user and this book
+        # Check for existing subscription for this user and this lecture
         existing_subscription = db.session.query(Subscription).filter_by(id_user=user_id, id_lecture=book_id).first()
 
-        if existing_subscription is None:
+        if existing_subscription:
+            # The user is already subscribed, so set an error message
+            message = "Esti deja abonat la aceasta lectura."
+        else:
             # Add subscription to the 'subscription' table
-            new_subscription = Subscription(id_user=user_id, id_lecture=book_id, start_date=datetime.now(),
-                                            current_chunk=0, is_active=True)
+            new_subscription = Subscription(
+                id_user=user_id,
+                id_lecture=book_id,
+                start_date=datetime.now(),
+                current_chunk=1,
+                is_active=True
+            )
             db.session.add(new_subscription)
             db.session.commit()
+            send_email(email, current_lecture.title, 1, new_subscription.id)
+            # After successful subscription, redirect to index or another success page
+            return redirect(url_for('index'))
 
-        return redirect(url_for('index'))
-    return render_template('lecture.html', book_id=book_id, lecture=current_lecture)
+    return render_template('lecture.html', book_id=book_id, lecture=current_lecture, message=message)
 
 
 
-@app.route('/send_next_chunk/<user_email>/<alias>', methods=['GET'])
-def send_next_chunk(user_email, alias):
-    # Fetch the current_chunk for this user and this book from the database
-    user = User.query.filter_by(email=user_email).first()
-    lecture = Lecture.query.filter_by(alias=alias).first()
 
-    if not user or not lecture:
-        return "User or book not found!", 404
-
-    subscription = Subscription.query.filter_by(id_user=user.id, id_lecture=lecture.id).first()
+@app.route('/send_next_chunk/<int:subscription_id>', methods=['GET'])
+def send_next_chunk(subscription_id):
+    # Fetch the subscription from the database
+    subscription = db.session.get(Subscription, subscription_id)
 
     if not subscription:
-        return "User or book not found!", 404
+        return "Subscription not found!", 404
+
+    # Access the user and lecture directly from the subscription
+    user = subscription.user
+    lecture = subscription.lecture
+
+    # Ensure both user and lecture are present (though this should always be true if the subscription exists)
+    if not user or not lecture:
+        return "User or lecture not found!", 404
 
     current_chunk = subscription.current_chunk
+
+    # Check if the current_chunk is less than the total number of chunks
+    if current_chunk >= lecture.chunks:
+        return "No more chunks to send!", 400
 
     # Update the current_chunk in the database
     subscription.current_chunk = current_chunk + 1
     db.session.commit()
 
     # Send an email with the new chunk
-    send_email(user.email, lecture.title, current_chunk + 1)
+
+    send_email(user.email, lecture.title, current_chunk + 1, subscription_id)
 
     return "Next chunk sent!"
+
 
 
 if __name__ == '__main__':

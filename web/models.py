@@ -31,7 +31,6 @@ class Lecture(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255), nullable=False)
-    alias = db.Column(db.String(255))  # Removed nullable=False since it's DEFAULT NULL in the SQL
     description = db.Column(db.String(5000), nullable=False)  # Added this line
     chunks = db.Column(db.Integer, nullable=False)
     id_category = db.Column(db.Integer, db.ForeignKey('lecture_category.id'), nullable=False)

@@ -1,33 +1,33 @@
 <html lang="ro" xmlns="http://www.w3.org/1999/html">
-   <head>
-      <meta charset="UTF-8">
-      <title>Micro Lecturi - Find a book</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
-         rel="stylesheet">
-      <script>window.plausible = window.plausible || function () {
-         (window.plausible.q = window.plausible.q || []).push(arguments)
-         }
-      </script>
-      <meta property="og:title" content="Micro Lecturi">
-      <meta property="og:description" content="Read classic books as email newsletters.">
-      <meta property="og:image"
-         content="https://modernserial.s3.us-west-1.amazonaws.com/images/a-a-a-a-buncha-static-images/default-og-image.png">
-      <meta property="og:url" content="https://modernserial.com/books/">
-      <meta property="og:type" content="website">
-      <meta name="twitter:card" content="summary_large_image">
-   </head>
-   <body class="flex flex-col h-screen justify-between">
-      <header class="absolute inset-x-0 top-0 z-30 bg-amber-50">
-         <nav class="flex mx-auto items-center justify-between p-3 gap-4 md:gap-8 lg:px-8" aria-label="Global">
-            <a href="/" class="-m-1.5 p-1.5 sm:flex-1">
+<head>
+    <meta charset="UTF-8">
+    <title>Micro Lecturi - Find a book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+          rel="stylesheet">
+    <script>window.plausible = window.plausible || function () {
+        (window.plausible.q = window.plausible.q || []).push(arguments)
+    }
+    </script>
+    <meta property="og:title" content="Micro Lecturi">
+    <meta property="og:description" content="Read classic books as email newsletters.">
+    <meta property="og:image"
+          content="https://modernserial.s3.us-west-1.amazonaws.com/images/a-a-a-a-buncha-static-images/default-og-image.png">
+    <meta property="og:url" content="https://modernserial.com/books/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="flex flex-col h-screen justify-between">
+<header class="absolute inset-x-0 top-0 z-30 bg-amber-50">
+    <nav class="flex mx-auto items-center justify-between p-3 gap-4 md:gap-8 lg:px-8" aria-label="Global">
+        <a href="/" class="-m-1.5 p-1.5 sm:flex-1">
                <span class="h8 font-sans text-lg sm:text-xl font-semibold">
                   <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-                     width="322.000000pt" height="43.000000pt" viewBox="0 0 322.000000 43.000000"
-                     preserveAspectRatio="xMidYMid meet" style="zoom: 60%">
+                       width="322.000000pt" height="43.000000pt" viewBox="0 0 322.000000 43.000000"
+                       preserveAspectRatio="xMidYMid meet" style="zoom: 60%">
                      <g transform="translate(0.000000,43.000000) scale(0.100000,-0.100000)"
                         fill="#000000" stroke="none">
                         <path d="M191 293 c-5 -21 -19 -76 -31 -123 -12 -47 -23 -93 -26 -102 -4 -12
@@ -70,70 +70,74 @@
                      </g>
                   </svg>
                </span>
-            </a>
-         </nav>
-      </header>
-      <div class="mb-auto grow" style="background-image: url('{{ url_for('static', filename='img/background.png') }}');">
-         <div class="overflow-hidden">
-            <div class="relative mx-auto max-w-7xl pb-8 px-6 lg:px-8">
-               <div class="pt-24 pb-2 px-6 sm:pt-32 lg:px-8">
-                  <div class="mx-auto max-w-2xl text-center">
-                     <h2 class="text-lg font-semibold text-red-400">{{ lecture.author }}</h2>
-                     <h3 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        </a>
+    </nav>
+</header>
+<div class="mb-auto grow" style="background-image: url('{{ url_for('static', filename='img/background.png') }}');">
+    <div class="overflow-hidden">
+        <div class="relative mx-auto max-w-7xl pb-8 px-6 lg:px-8">
+            <div class="pt-24 pb-2 px-6 sm:pt-32 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h2 class="text-lg font-semibold text-red-400">{{ lecture.author }}</h2>
+                    <h3 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {{ lecture.title }}
-                     </h3>
-                     <div class="mx-auto max-w-prose text-base pt-4 lg:max-w-none">
+                    </h3>
+                    <div class="mx-auto max-w-prose text-base pt-4 lg:max-w-none">
                         <div class="relative z-10" role="dialog" aria-modal="true">
-                           <form method="post">
-                              <div class="inset-0 z-10 overflow-y-auto pt-4 px-4">
-                                 <div class="mx-auto max-w-md md:max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all">
-                                    <div class="relative">
-                                       <svg class="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
-                                          viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                          <path fill-rule="evenodd"
-                                             d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                                             clip-rule="evenodd"></path>
-                                       </svg>
-                                       <!-- todo add hidden label -->
-                                       <input id="email" type="email" name="email"
-                                          class="h-12 border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm w-full"
-                                          placeholder="Adresa de e-mail" role="combobox" aria-expanded="false" required>
+                            <form method="post">
+                                {% if message %}
+                                <p style="color: red;">{{ message }}</p>
+                                {% endif %}
+                                <div class="inset-0 z-10 overflow-y-auto pt-4 px-4">
+                                    <div class="mx-auto max-w-md md:max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all">
+                                        <div class="relative">
+                                            <svg class="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
+                                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd"
+                                                      d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                                                      clip-rule="evenodd"></path>
+                                            </svg>
+                                            <!-- todo add hidden label -->
+                                            <input id="email" type="email" name="email"
+                                                   class="h-12 border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm w-full"
+                                                   placeholder="Adresa de e-mail" role="combobox" aria-expanded="false"
+                                                   required>
+                                        </div>
                                     </div>
-                                 </div>
-                                  <br>
-                                 <button type="submit"
-                                    class="rounded-md bg-red-400 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                                 Abonează-te
-                                 </button>
-                              </div>
-                           </form>
-                           <p class="text-lg text-gray-500">Citește în {{ lecture.chunks }} mail-uri.</p>
+                                    <br>
+                                    <button type="submit"
+                                            class="rounded-md bg-red-400 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                                        Abonează-te
+                                    </button>
+                                </div>
+                            </form>
+                            <p class="text-lg text-gray-500">Citește în {{ lecture.chunks }} mail-uri.</p>
                         </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="mt-4 lg:grid lg:grid-cols-3 lg:gap-8 px-6 lg:px-8">
-                  <div class="relative lg:col-start-3 lg:row-start-1">
-                     <div class="relative mx-auto max-w-xs lg:max-w-none">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 lg:grid lg:grid-cols-3 lg:gap-8 px-6 lg:px-8">
+                <div class="relative lg:col-start-3 lg:row-start-1">
+                    <div class="relative mx-auto max-w-xs lg:max-w-none">
                         <figure>
-                           <div class="aspect-none">
-                              <img class="rounded-lg object-cover object-top shadow-lg mx-auto w-auto"
-                                 src="{{ url_for('static', filename='img/' + lecture.id|string + '.PNG') }}" alt="">
-                           </div>
+                            <div class="aspect-none">
+                                <img class="rounded-lg object-cover object-top shadow-lg mx-auto w-auto"
+                                     src="{{ url_for('static', filename='img/' + lecture.id|string + '.PNG') }}" alt="">
+                            </div>
                         </figure>
-                     </div>
-                  </div>
-                  <div class="mt-4 lg:mt-0 col-span-2">
-                     <div class="prose prose-neutral mx-auto mt-5 text-gray-500 lg:col-start-1 lg:row-start-1 lg:max-w-none">
+                    </div>
+                </div>
+                <div class="mt-4 lg:mt-0 col-span-2">
+                    <div class="prose prose-neutral mx-auto mt-5 text-gray-500 lg:col-start-1 lg:row-start-1 lg:max-w-none">
                         <h3>Descriere</h3>
                         <p>{{ lecture.description }}</p>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-      <!-- Footer -->
+        </div>
+    </div>
+</div>
+<!-- Footer -->
 <footer aria-labelledby="footer-heading" class="bg-white relative border-t border-gray-900/10">
     <h2 id="footer-heading" class="sr-only">Footer</h2>
     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8 gap-2">
@@ -177,5 +181,5 @@
         </div>
     </div>
 </footer>
-   </body>
+</body>
 </html>
