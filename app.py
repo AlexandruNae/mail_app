@@ -1,5 +1,5 @@
 import sqlalchemy
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, url_for, redirect, flash
 from datetime import datetime
 import pandas as pd
 from extensions import db
@@ -12,6 +12,7 @@ from src.main import send_email
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.secret_key = 'WYrsO2sH^vsW4n90pf?T#mG[}^X}dC'
 db.init_app(app)
 
 
@@ -117,17 +118,14 @@ def send_next_chunk(subscription_id):
     if not subscription:
         return "Subscription not found!", 404
 
-    # Access the user and lecture directly from the subscription
     user = subscription.user
     lecture = subscription.lecture
 
-    # Ensure both user and lecture are present (though this should always be true if the subscription exists)
     if not user or not lecture:
         return "User or lecture not found!", 404
 
     current_chunk = subscription.current_chunk
 
-    # Check if the current_chunk is less than the total number of chunks
     if current_chunk >= lecture.chunks:
         return "No more chunks to send!", 400
 
@@ -136,10 +134,24 @@ def send_next_chunk(subscription_id):
     db.session.commit()
 
     # Send an email with the new chunk
-
     send_email(user.email, lecture.title, current_chunk + 1, subscription_id)
 
-    return "Next chunk sent!"
+    # Flash a message to the user that will be displayed in a removable dialog
+    flash(lecture.title + ' partea ' + str(current_chunk) + ' / ' + str(lecture.chunks) + ' a fost trimisă!', 'info')
+
+    # Return the rendered index page
+    lecture_categories = LectureCategory.query.all()
+    category_names = {category.name: category.id for category in lecture_categories}
+
+    genre = request.args.get('genre', default="Toate")
+    if genre in category_names and genre != "Toate":
+        lectures = Lecture.query.filter_by(id_category=category_names[genre]).all()
+    else:
+        lectures = Lecture.query.all()
+        genre = "Toate"
+
+    return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories, selected_genre=genre)
+
 
 
 

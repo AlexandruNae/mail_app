@@ -2881,3 +2881,65 @@ select {
         grid-template-columns: repeat(6, minmax(0, 1fr))
     }
 }
+
+/* Overlay covering the whole screen */
+#overlay {
+    position: fixed; /* Fixed position */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.7); /* Black background with opacity */
+    z-index: 10; /* Ensure it's above other items but below the flash message container */
+}
+
+/* Flash message container */
+#flash-message-container {
+    position: fixed; /* Fixed position */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Offset the container by half its width and height */
+    z-index: 11; /* Above the overlay */
+    padding: 20px;
+    background: #fff;
+    color: rgb(31, 31, 31);;
+    /* box-shadow removed to avoid shadow on the message box */
+}
+
+/* Individual flash messages */
+.alert {
+    margin-bottom: 10px; /* Space between messages */
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center; /* Center text */
+rgb(31, 31, 31);
+}
+
+/* Style for success message */
+.alert-success {
+    background-color: #28a745;
+}
+
+/* Style for error message */
+.alert-error {
+    background-color: #dc3545;
+}
+
+/* Style for info message */
+.alert-info {
+    background-color: #17a2b8;
+}
+
+/* Style for warning message */
+.alert-warning {
+    background-color: #ffc107;
+}
+
+/* Close button */
+.close-button {
+    background-color: transparent;
+    border: none;
+    color: rgb(31, 31, 31);;
+    font-size: 20px;
+    cursor: pointer;
+}

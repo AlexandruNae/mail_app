@@ -8,14 +8,15 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+          rel="stylesheet">
 
-<!--    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com/">
+    <!--    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=fallback">-->
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=fallback">-->
 
 
     <script>window.plausible = window.plausible || function () {
@@ -477,14 +478,43 @@
         <div class="mt-4 md:mt-0 md:order-2">
             <p class="text-center text-base text-gray-400">
                 Aveti feedback? Anuntati-ne la
-                <a href="mailto:feedback@modernserial.com" target="_blank" class="underline hover:text-gray-500">
-                    futem_pisica@pestetot.com
+                <a href="mailto:contact@microlecturi.ro" target="_blank" class="underline hover:text-gray-500">
+                    contact@microlecturi.ro
                 </a>
             </p>
         </div>
     </div>
 </footer>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div id="overlay"></div>
+<div id="flash-message-container">
+    {% for category, message in messages %}
+    <div class="alert {{ category }}">
+        {{ message }}
+        <button type="button" class="close-button" onclick="removeFlashMessage()">×</button>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    // Function to remove the flash message and overlay
+    function removeFlashMessage() {
+        var messageContainer = document.getElementById('flash-message-container');
+        var overlay = document.getElementById('overlay');
+        if (messageContainer && overlay) {
+            messageContainer.remove();
+            overlay.remove();
+        }
+    }
 
+    // After 5 seconds remove the flash message and reload the page
+    setTimeout(function () {
+        removeFlashMessage();
+        window.location.href = '/'; // Change this to the URL or path to your index page if it's different
+    }, 5000); // 5000 milliseconds = 5 seconds
+</script>
+{% endif %}
+{% endwith %}
 
 </body>
 </html>
