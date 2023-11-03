@@ -1,3 +1,4 @@
+from flask_sqlalchemy.session import Session
 from sqlalchemy import create_engine
 import smtplib
 import os
@@ -10,8 +11,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from config import WEBSITE_URL
 from utils import title_to_alias
 
-# Create a SQLAlchemy engine
+from sqlalchemy.orm import sessionmaker
+
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
+
+# Create a configured "Session" class
+Session = sessionmaker(bind=engine)
+# Create a SQLAlchemy engine
 
 
 def get_content(book_title, chunk_number):
@@ -49,6 +55,8 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
 
     # Replace placeholders in the template with actual content
     # Ensure the placeholders in the template are formatted as {placeholder_name}
+    chunks = get_lecture_chunks_from_subscription(subscription_id)
+
     email_body = email_template.format(
         book_title=book_title,
         current_chunk=current_chunk,
@@ -56,14 +64,15 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         next_chunk_url=next_chunk_url,
         website_url=WEBSITE_URL,
         is_last_mail='inline-block' if next_chunk_exists else 'none',  # New placeholder for CSS display property
-        is_not_last_mail = 'none' if next_chunk_exists else 'inline-block'  # New placeholder for CSS display property
+        is_not_last_mail = 'none' if next_chunk_exists else 'inline-block',  # New placeholder for CSS display property
+        chunks = chunks
     )
 
     # Create the email message
     msg = MIMEMultipart('alternative')
     msg['From'] = smtp_user
     msg['To'] = user_email
-    msg['Subject'] = f"{book_title} - Partea {current_chunk}"
+    msg['Subject'] = f"{book_title} - Partea {current_chunk} / {chunks}"
 
     # Attach the HTML content
     msg.attach(MIMEText(email_body, 'html'))
@@ -131,6 +140,33 @@ def update_send():
                 except SQLAlchemyError as e:
                     print(f"An error occurred: {e}")
                     connection.rollback()
+
+
+def get_lecture_chunks_from_subscription(subscription_id):
+    session = Session()
+    try:
+        subscription_query = text("""
+            SELECT lecture.chunks
+            FROM subscription
+            JOIN lecture ON subscription.id_lecture = lecture.id
+            WHERE subscription.id = :subscription_id
+        """)
+
+        result = session.execute(subscription_query, {'subscription_id': subscription_id}).fetchone()
+        session.close()
+
+        # Check if the query returned a result
+        if result:
+            # Since 'fetchone' returns a tuple, you can access the first element directly
+            return result[0]
+        else:
+            print(f"No lecture chunks found for subscription ID {subscription_id}")
+            return None
+
+    except SQLAlchemyError as e:
+        session.close()
+        print(f"An error occurred when fetching lecture chunks: {e}")
+        return None
 
 
 if __name__ == '__main__':
