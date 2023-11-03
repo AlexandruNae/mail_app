@@ -1,6 +1,6 @@
 import os
 import PyPDF2
-from src.utils import title_to_alias
+from src.utils import title_to_alias, correct_splits
 
 def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
     # Create the main folder 'lecture' if not exist
@@ -27,6 +27,7 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
             page_content = page_content.replace(' -', '-')
             page_content = page_content.replace('-\n', '-')
             page_content = page_content.replace('  —', '\n—')
+            # page_content = correct_splits(page_content)
 
             char_buffer += page_content
 
