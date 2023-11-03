@@ -1,6 +1,6 @@
 import os
 import PyPDF2
-
+from src.utils import title_to_alias
 
 def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
     # Create the main folder 'lecture' if not exist
@@ -24,6 +24,9 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
             # Get content of each page
             page = reader.pages[i]
             page_content = page.extract_text()
+            page_content = page_content.replace(' -', '-')
+            page_content = page_content.replace('-\n', '-')
+            page_content = page_content.replace('  —', '\n—')
 
             char_buffer += page_content
 
@@ -35,7 +38,7 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=5000):
 
                 # Write the content to a txt file
                 with open(f'{book_folder}/{book_alias}_{file_count}.txt', 'w', encoding='utf-8') as txt_file:
-                    txt_file.write(char_buffer[:char_limit])
+                    txt_file.write('\n' + char_buffer[:char_limit])
 
                 # Update char_buffer and file_count
                 char_buffer = char_buffer[char_limit:]
@@ -62,7 +65,8 @@ if __name__ == "__main__":
     # Combine the project directory with the relative path to get the full path to the PDF
     pdf_path = os.path.join(project_directory, pdf_relative_path)
 
-    book_alias = 'harap_alb'  # Replace with your book alias
+
     book_title = 'Harap-Alb'  # Replace with your book title
+    book_alias = title_to_alias(book_title)
 
     split_pdf_into_txt(pdf_path, book_alias, book_title)
