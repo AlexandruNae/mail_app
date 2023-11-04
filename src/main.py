@@ -88,7 +88,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
 
 def update_send():
     # Query database to get subscriptions
-    query = "SELECT user.email, user.enabled, subscription.current_chunk, lecture.alias " \
+    query = "SELECT user.email, user.enabled, subscription.current_chunk, lecture.alias, subscription.id as subscription_id " \
             "FROM subscription " \
             "JOIN user ON subscription.id_user = user.id " \
             "JOIN lecture ON subscription.id_lecture = lecture.id " \
@@ -96,16 +96,17 @@ def update_send():
             "and user.enabled = True"
     df = pd.read_sql(query, engine)
 
-
-
     for index, row in df.iterrows():
         user_email = row['email']
         book_alias = row['alias']
         current_chunk = row['current_chunk']
         enabled = row['enabled']
+        subscription_id = row['subscription_id']
 
         if enabled == 1:
-            send_email(user_email, book_alias, current_chunk)
+            if current_chunk == 0:
+                current_chunk = 1
+            send_email(user_email, book_alias, current_chunk, subscription_id)
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
