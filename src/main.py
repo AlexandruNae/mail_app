@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import smtplib
 import ssl
 from config import WEBSITE_URL
-from utils import title_to_alias
+from src.utils import title_to_alias
 
 from sqlalchemy.orm import sessionmaker
 
