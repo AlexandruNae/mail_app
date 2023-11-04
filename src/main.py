@@ -24,7 +24,7 @@ Session = sessionmaker(bind=engine)
 
 def get_content(book_title, chunk_number):
     book_alias = title_to_alias(book_title)
-    with open(f'mail_app/lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
+    with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
         return f.read()
 
 
@@ -49,7 +49,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
     next_chunk_exists = os.path.isfile(next_chunk_path)
 
     # Path to the email template
-    template_path = os.path.join('mail_app/templates', 'email_template.html')
+    template_path = os.path.join('templates', 'email_template.html')
 
     # Read the email template
     with open(template_path, 'r') as template_file:
