@@ -4,4 +4,4 @@ SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:Pitagora007%231@localhost:3306/m
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy()
 
-WEBSITE_URL = "http://127.0.0.1:5000"
+WEBSITE_URL = "https://www.microlecturi.ro"
