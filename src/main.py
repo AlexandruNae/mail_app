@@ -14,7 +14,7 @@ from src.utils import title_to_alias
 
 from sqlalchemy.orm import sessionmaker
 
-WEBSITE_URL = "http://127.0.0.1:5000"
+WEBSITE_URL = " https://www.microlecturi.ro"
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
 
 # Create a configured "Session" class
