@@ -9,11 +9,12 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 import smtplib
 import ssl
-from config import WEBSITE_URL
+# from config import WEBSITE_URL
 from src.utils import title_to_alias
 
 from sqlalchemy.orm import sessionmaker
 
+WEBSITE_URL = "http://127.0.0.1:5000"
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
 
 # Create a configured "Session" class
@@ -23,7 +24,7 @@ Session = sessionmaker(bind=engine)
 
 def get_content(book_title, chunk_number):
     book_alias = title_to_alias(book_title)
-    with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
+    with open(f'mail_app/lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
         return f.read()
 
 
@@ -48,7 +49,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
     next_chunk_exists = os.path.isfile(next_chunk_path)
 
     # Path to the email template
-    template_path = os.path.join('templates', 'email_template.html')
+    template_path = os.path.join('mail_app/templates', 'email_template.html')
 
     # Read the email template
     with open(template_path, 'r') as template_file:
@@ -88,7 +89,8 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
 
 def update_send():
     # Query database to get subscriptions
-    query = "SELECT user.email, user.enabled, subscription.current_chunk, lecture.alias " \
+    query = "SELECT user.email, user.enabled, subscription.current_chunk, " \
+            "lecture.title,  subscription.id as subscription_id " \
             "FROM subscription " \
             "JOIN user ON subscription.id_user = user.id " \
             "JOIN lecture ON subscription.id_lecture = lecture.id " \
@@ -96,16 +98,17 @@ def update_send():
             "and user.enabled = True"
     df = pd.read_sql(query, engine)
 
-
-
     for index, row in df.iterrows():
         user_email = row['email']
-        book_alias = row['alias']
         current_chunk = row['current_chunk']
         enabled = row['enabled']
+        subscription_id = row['subscription_id']
+        book_title = row['title']
 
         if enabled == 1:
-            send_email(user_email, book_alias, current_chunk)
+            if current_chunk == 0:
+                current_chunk = 1
+            send_email(user_email, book_title, current_chunk, subscription_id)
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
@@ -122,10 +125,10 @@ def update_send():
                 user_id = result[0]
 
                 # Get lecture ID from alias
-                lecture_id_query = text("SELECT id FROM lecture WHERE alias = :alias")
-                result = connection.execute(lecture_id_query, {'alias': book_alias}).fetchone()
+                lecture_id_query = text("SELECT id FROM lecture WHERE title = :title")
+                result = connection.execute(lecture_id_query, {'title': book_title}).fetchone()
                 if not result:
-                    print(f"No lecture found with alias {book_alias}")
+                    print(f"No lecture found with alias {book_title}")
                     continue
                 lecture_id = result[0]
 
