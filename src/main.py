@@ -7,7 +7,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-
+import smtplib
+import ssl
 from config import WEBSITE_URL
 from utils import title_to_alias
 
@@ -28,18 +29,18 @@ def get_content(book_title, chunk_number):
 
 def send_email(user_email, book_title, current_chunk, subscription_id):
     # SMTP settings
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 465
-    smtp_user = "alexnaer@gmail.com"
-    smtp_password = "aait colq xzma aaib"
+    smtp_server = "smtp.zoho.eu"
+    smtp_port = 587
+    smtp_user = "contact@microlecturi.ro"
+    smtp_password = "Pitagora007#123"
 
     # Retrieve the content for the current chunk of the book
     content = get_content(book_title, current_chunk)
 
-    #Html new line
+    # Replace newlines with HTML line breaks for proper email formatting
     content = content.replace("\n", "<br>")
 
-    next_chunk_url = WEBSITE_URL +  "/send_next_chunk/" + str(subscription_id)
+    next_chunk_url = WEBSITE_URL + "/send_next_chunk/" + str(subscription_id)
 
     # Check if the next chunk exists
     book_alias = title_to_alias(book_title)
@@ -54,7 +55,6 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         email_template = template_file.read()
 
     # Replace placeholders in the template with actual content
-    # Ensure the placeholders in the template are formatted as {placeholder_name}
     chunks = get_lecture_chunks_from_subscription(subscription_id)
 
     email_body = email_template.format(
@@ -63,14 +63,14 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         content=content,
         next_chunk_url=next_chunk_url,
         website_url=WEBSITE_URL,
-        is_last_mail='inline-block' if next_chunk_exists else 'none',  # New placeholder for CSS display property
-        is_not_last_mail = 'none' if next_chunk_exists else 'inline-block',  # New placeholder for CSS display property
-        chunks = chunks
+        is_last_mail='inline-block' if not next_chunk_exists else 'none',
+        is_not_last_mail='none' if not next_chunk_exists else 'inline-block',
+        chunks=chunks
     )
 
     # Create the email message
     msg = MIMEMultipart('alternative')
-    msg['From'] = smtp_user
+    msg['From'] = f'Micro Lecturi <{smtp_user}>'
     msg['To'] = user_email
     msg['Subject'] = f"{book_title} - Partea {current_chunk} / {chunks}"
 
@@ -78,9 +78,12 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
     msg.attach(MIMEText(email_body, 'html'))
 
     # Send the email using SMTP
-    with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-        server.login(smtp_user, smtp_password)
-        server.sendmail(smtp_user, user_email, msg.as_string())
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.ehlo()  # Identify ourselves to the SMTP server
+        server.starttls()  # Secure the SMTP connection
+        server.ehlo()  # Re-identify ourselves over the secure connection
+        server.login(smtp_user, smtp_password)  # Log in to the SMTP server
+        server.sendmail(f'Micro Lecturi <{smtp_user}>', user_email, msg.as_string())
 
 
 def update_send():

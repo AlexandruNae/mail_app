@@ -1,14 +1,11 @@
-import sqlalchemy
-from flask import Flask, request, render_template, url_for, redirect, flash
 from datetime import datetime
-import pandas as pd
-from extensions import db
-import os
-from src.main import update_send
-from flask_sqlalchemy import SQLAlchemy
+
+from flask import Flask, request, render_template, url_for, redirect, flash
 from sqlalchemy import or_
-from web.models import Lecture, LectureCategory, User, Subscription
+
+from extensions import db
 from src.main import send_email
+from web.models import Lecture, LectureCategory, User, Subscription
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -18,7 +15,6 @@ db.init_app(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
     lecture_categories = LectureCategory.query.all()
     category_names = {category.name: category.id for category in lecture_categories}
 
@@ -108,8 +104,6 @@ def lecture(book_id):
     return render_template('lecture.html', book_id=book_id, lecture=current_lecture, message=message)
 
 
-
-
 @app.route('/send_next_chunk/<int:subscription_id>', methods=['GET'])
 def send_next_chunk(subscription_id):
     # Fetch the subscription from the database
@@ -151,8 +145,6 @@ def send_next_chunk(subscription_id):
         genre = "Toate"
 
     return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories, selected_genre=genre)
-
-
 
 
 if __name__ == '__main__':
