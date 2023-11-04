@@ -63,8 +63,8 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         content=content,
         next_chunk_url=next_chunk_url,
         website_url=WEBSITE_URL,
-        is_last_mail='inline-block' if not next_chunk_exists else 'none',
-        is_not_last_mail='none' if not next_chunk_exists else 'inline-block',
+        is_last_mail='inline-block' if next_chunk_exists else 'none',
+        is_not_last_mail='none' if next_chunk_exists else 'inline-block',
         chunks=chunks
     )
 
