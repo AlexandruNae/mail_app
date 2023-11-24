@@ -127,9 +127,8 @@ def update_send():
         book_title = row['title']
 
         if enabled == 1:
-            if current_chunk == 0:
-                current_chunk = 1
-            send_email(user_email, book_title, current_chunk, subscription_id)
+
+            send_email(user_email, book_title, current_chunk+1, subscription_id)
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
