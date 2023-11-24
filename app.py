@@ -131,7 +131,7 @@ def send_next_chunk(subscription_id):
     send_email(user.email, lecture.title, current_chunk + 1, subscription_id)
 
     # Flash a message to the user that will be displayed in a removable dialog
-    flash(lecture.title + ' partea ' + str(current_chunk) + ' / ' + str(lecture.chunks) + ' a fost trimisă!', 'info')
+    flash(lecture.title + ' partea ' + str(current_chunk+1) + ' / ' + str(lecture.chunks) + ' a fost trimisă!', 'info')
 
     # Return the rendered index page
     lecture_categories = LectureCategory.query.all()
