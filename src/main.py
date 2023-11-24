@@ -31,7 +31,7 @@ Session = sessionmaker(bind=engine)
 
 def check_if_book_finished(book_title, chunk_number):
     # Define the path to the folder
-
+    book_alias = title_to_alias(book_title)
     folder_path = os.path.join(f'lectures/{book_alias}', book_title)
 
     # Check if the folder exists
