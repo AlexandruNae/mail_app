@@ -34,7 +34,7 @@ def check_if_book_finished(book_title, chunk_number):
     book_alias = title_to_alias(book_title)
     # folder_path = os.path.join(f'lectures/{book_alias}', book_title)
 
-    next_chunk_path = f'lectures/{book_alias}/{book_alias}_{chunk_number + 1}.txt'
+    next_chunk_path = f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt'
 
     # Return True if n is greater than the number of .txt files, False otherwise
     return os.path.isfile(next_chunk_path)
