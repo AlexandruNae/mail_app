@@ -36,7 +36,7 @@ def normalize_page_content(page_content, min_words_per_line=3):
     return '\n'.join(normalized_lines)
 
 
-def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=8000):
+def split_pdf_into_txt(pdf_path, book_alias, char_limit=8000):
     # Create the main folder 'lectures' if not exist
     if not os.path.exists('../lectures'):
         os.makedirs('../lectures')
@@ -79,10 +79,40 @@ def split_pdf_into_txt(pdf_path, book_alias, book_title, char_limit=8000):
             with open(f'{book_folder}/{book_alias}_{file_count}.txt', 'w', encoding='utf-8') as txt_file:
                 txt_file.write(char_buffer)
 
+
+def split_txt_file(file_path, dest_folder, lines_per_file):
+    # Check if the source file exists
+    if not os.path.exists(file_path):
+        print("The source file does not exist.")
+        return
+
+    # Check if the destination folder exists, if not, create it
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)
+
+    # Open the source file
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Splitting the file
+    for i in range(0, len(lines), lines_per_file):
+        part_no = i // lines_per_file + 1
+        part_name = os.path.join(dest_folder, f'part_{part_no}.txt')
+
+        with open(part_name, 'w') as part_file:
+            part_file.writelines(lines[i:i + lines_per_file])
+
+    print(f"File '{file_path}' has been split into {part_no} parts in '{dest_folder}'.")
+
+
+# Example usage
+
 if __name__ == "__main__":
     # Assume the current working directory is 'mail_app_scripts'
     # Construct the relative path to the PDF within the project directory
-    pdf_relative_path = os.path.join('book_pdf', 'Moromeții_I.pdf')
+    book_title = 'Moromeții I'  # Replace with your book title
+    book_alias = title_to_alias(book_title)
+    pdf_relative_path = os.path.join('book_pdf', book_title)
 
     # Get the absolute path of the current script (which is in 'mail_app_scripts')
     project_directory = os.path.dirname(os.path.abspath(__file__))
@@ -91,7 +121,5 @@ if __name__ == "__main__":
     pdf_path = os.path.join(project_directory, pdf_relative_path)
 
 
-    book_title = 'Moromeții I'  # Replace with your book title
-    book_alias = title_to_alias(book_title)
-
-    split_pdf_into_txt(pdf_path, book_alias, book_title)
+    # split_pdf_into_txt(pdf_path, book_alias, book_title)
+    split_txt_file(pdf_path, book_alias, 100)
