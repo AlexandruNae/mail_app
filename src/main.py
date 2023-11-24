@@ -10,10 +10,17 @@ from sqlalchemy.exc import SQLAlchemyError
 import smtplib
 import ssl
 # from config import WEBSITE_URL
-from src.utils import title_to_alias
+# from src.utils import title_to_alias
 
 from sqlalchemy.orm import sessionmaker
-
+def title_to_alias(input_text):
+    title_underscores = input_text.lower().replace("-", "_").replace(" ", "_")
+    parts = title_underscores.split('_', 5)
+    # If we have less than 6 parts, it means there weren't 5 underscores, return the original string
+    if len(parts) < 6:
+        return title_underscores
+    # Join the parts back together with underscores
+    return '_'.join(parts[:5])
 WEBSITE_URL = " https://www.microlecturi.ro"
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
 
