@@ -32,28 +32,24 @@ Session = sessionmaker(bind=engine)
 def check_if_book_finished(book_title, chunk_number):
     # Define the path to the folder
     book_alias = title_to_alias(book_title)
-    folder_path = os.path.join(f'lectures/{book_alias}', book_title)
+    # folder_path = os.path.join(f'lectures/{book_alias}', book_title)
 
-    # Check if the folder exists
-    if not os.path.exists(folder_path):
-        print(f"Folder for '{book_title}' does not exist.")
-        return False
-
-    # Count the number of .txt files in the folder
-    txt_files_count = sum(1 for file in os.listdir(folder_path) if file.endswith('.txt'))
+    next_chunk_path = f'lectures/{book_alias}/{book_alias}_{chunk_number + 1}.txt'
 
     # Return True if n is greater than the number of .txt files, False otherwise
-    return chunk_number > txt_files_count
+    return os.path.isfile(next_chunk_path)
 
 
 def get_content(book_title, chunk_number):
     book_alias = title_to_alias(book_title)
-    if check_if_book_finished(book_title, chunk_number):
-        with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
-            return f.read()
-    return f'Felicitări, ai terminat de citit cartea {book_title}'
+    # if check_if_book_finished(book_title, chunk_number):
+    with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
+        return f.read()
+    # return ''
 
 def send_email(user_email, book_title, current_chunk, subscription_id):
+    if not check_if_book_finished(book_title, current_chunk):
+        return
     # SMTP settings
     smtp_server = "smtp.zoho.eu"
     smtp_port = 587
