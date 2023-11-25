@@ -6,34 +6,30 @@ import fitz  # PyMuPDF
 from src.utils import title_to_alias
 
 
-def normalize_page_content(page_content, min_words_per_line=3):
-    lines = page_content.split('\n')
+def normalize_page_content(page_content, max_words_per_line=15):
+    words = page_content.split()
     normalized_lines = []
-    current_line = ''
+    current_line_words = []
 
-    for line in lines:
-        line = line
-        if line.startswith('–'):  # Dacă linia începe cu "–", o tratăm ca un început de linie nouă
-            if current_line:  # Dacă avem text în current_line, îl adăugăm la rezultat
-                normalized_lines.append(current_line)
-                current_line = line  # Începem o nouă linie cu textul curent
-            else:
-                normalized_lines.append(line)  # Dacă current_line e gol, pur și simplu adăugăm linia
+    for word in words:
+        # Check if the word is a dialogue dash, and if so, start a new line
+        if word.startswith("—"):
+            if current_line_words:  # Add the current line if it has words
+                normalized_lines.append(' '.join(current_line_words))
+                current_line_words = [word]
+            else:  # If the current line is empty, just add the dialogue dash
+                current_line_words.append(word)
+        elif len(current_line_words) < max_words_per_line:
+            current_line_words.append(word)
         else:
-            words = line.split()
-            # Concatenăm cu linia curentă doar dacă nu va deveni prea lungă
-            if len(words) < min_words_per_line and (len(current_line.split()) + len(words) <= min_words_per_line):
-                current_line += (' ' if current_line else '') + line
-            else:  # Dacă linia e suficient de lungă, o tratăm ca o linie separată
-                if current_line:  # Dacă current_line are conținut, îl adăugăm la rezultat
-                    normalized_lines.append(current_line)
-                current_line = line
+            normalized_lines.append(' '.join(current_line_words))
+            current_line_words = [word]
 
-    # Adăugăm orice conținut rămas în current_line
-    if current_line:
-        normalized_lines.append(current_line)
+    if current_line_words:  # Add the last line if it has words
+        normalized_lines.append(' '.join(current_line_words))
 
     return '\n'.join(normalized_lines)
+
 
 
 def split_pdf_into_txt(pdf_path, book_alias, char_limit=8000):
@@ -110,7 +106,7 @@ def split_txt_file(file_path, dest_folder, lines_per_file):
 if __name__ == "__main__":
     # Assume the current working directory is 'mail_app_scripts'
     # Construct the relative path to the PDF within the project directory
-    pdf_relative_path = os.path.join('book_pdf', 'Maytrey.pdf')
+    pdf_relative_path = os.path.join('book_pdf', 'O scrisoare pierdută.pdf')
 
     # Get the absolute path of the current script (which is in 'mail_app_scripts')
     project_directory = os.path.dirname(os.path.abspath(__file__))
@@ -119,7 +115,7 @@ if __name__ == "__main__":
     pdf_path = os.path.join(project_directory, pdf_relative_path)
 
 
-    book_title = 'Maitreyi'  # Replace with your book title
+    book_title = 'O scrisoare pierdută'  # Replace with your book title
     book_alias = title_to_alias(book_title)
 
     split_pdf_into_txt(pdf_path, book_alias)
