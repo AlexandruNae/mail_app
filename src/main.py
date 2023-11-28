@@ -63,6 +63,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
     content = content.replace("\n", "<br>")
 
     next_chunk_url = WEBSITE_URL + "/send_next_chunk/" + str(subscription_id)
+    cancel_subscription = WEBSITE_URL + "/cancel_subscription/" + str(subscription_id)
 
     # Check if the next chunk exists
     book_alias = title_to_alias(book_title)
@@ -84,6 +85,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         current_chunk=current_chunk,
         content=content,
         next_chunk_url=next_chunk_url,
+        cancel_subscription=cancel_subscription,
         website_url=WEBSITE_URL,
         is_last_mail='inline-block' if next_chunk_exists else 'none',
         is_not_last_mail='none' if next_chunk_exists else 'inline-block',
