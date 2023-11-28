@@ -152,7 +152,7 @@ def split_txt_file(file_path, dest_folder, lines_per_file):
 if __name__ == "__main__":
     # Assume the current working directory is 'mail_app_scripts'
     # Construct the relative path to the PDF within the project directory
-    pdf_relative_path = os.path.join('book_pdf', 'Baltagul.pdf')
+    pdf_relative_path = os.path.join('book_pdf', 'Ultima noapte de dragoste, întâia noapte de război.pdf')
 
     # Get the absolute path of the current script (which is in 'mail_app_scripts')
     project_directory = os.path.dirname(os.path.abspath(__file__))
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     pdf_path = os.path.join(project_directory, pdf_relative_path)
 
 
-    book_title = 'Baltagul'  # Replace with your book title
+    book_title = 'Ultima noapte de dragoste, întâia noapte de război'  # Replace with your book title
     book_alias = title_to_alias(book_title)
 
     split_pdf_into_txt(pdf_path, book_alias)
