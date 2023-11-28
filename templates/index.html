@@ -177,7 +177,7 @@
             {{ lecture.title }}
           </p>
           <a href="{{ url_for('search_lectures', search=lecture.author) }}"
-            class="block text-center text-sm font-medium text-gray-500 decoration-inherit underline hover:text-gray-700">
+            class="block text-center text-sm font-medium text-gray-500 decoration-inherit underline hover:text-gray-700 truncate">
             {{ lecture.author }}
           </a>
           <p class="pointer-events-none text-center block truncate text-xs font-medium text-gray-600">
