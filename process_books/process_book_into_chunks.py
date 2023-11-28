@@ -5,7 +5,7 @@ from src.utils import title_to_alias
 import fitz  # PyMuPDF
 
 # Pentru Enigma otiliei
-diacritic_mapping = {
+diacritic_mapping_enigma_otiliei = {
     '=': 'ș',
     '`': 'â',
     '[': 'ă',
@@ -14,6 +14,27 @@ diacritic_mapping = {
     '}': 'Î',
     '+': 'Ș',
     '|': 'Ț',
+}
+
+# Pentru Enigma otiliei
+diacritic_mapping_iona = {
+    'ᗰ': 'ș',
+    '`': 'â',
+    'ူ': 'ă',
+    'ᘰ': 'ț',
+    ']': 'î',
+    '}': 'Î',
+    'ᗠ': 'Ș',
+}
+
+diacritic_mapping_patul_proust = {
+    'Ń': 'ț',
+    'ł': 'Ț',
+}
+
+diacritic_mapping_patul_ion = {
+    's,': 'ș',
+    't,': 'ț',
 }
 
 def replace_diacritics(input_text, mapping):
@@ -31,6 +52,7 @@ def title_to_alias(input_text):
     return '_'.join(parts[:5])
 
 def normalize_page_content(page_content, max_words_per_line=15):
+    # page_content = replace_diacritics(page_content, diacritic_mapping_patul_ion)
     words = page_content.split()
     normalized_lines = []
     current_line_words = []
@@ -130,7 +152,7 @@ def split_txt_file(file_path, dest_folder, lines_per_file):
 if __name__ == "__main__":
     # Assume the current working directory is 'mail_app_scripts'
     # Construct the relative path to the PDF within the project directory
-    pdf_relative_path = os.path.join('book_pdf', 'Alexandru Lăpușneanu.pdf')
+    pdf_relative_path = os.path.join('book_pdf', 'Baltagul.pdf')
 
     # Get the absolute path of the current script (which is in 'mail_app_scripts')
     project_directory = os.path.dirname(os.path.abspath(__file__))
@@ -139,7 +161,7 @@ if __name__ == "__main__":
     pdf_path = os.path.join(project_directory, pdf_relative_path)
 
 
-    book_title = 'Alexandru Lăpușneanu'  # Replace with your book title
+    book_title = 'Baltagul'  # Replace with your book title
     book_alias = title_to_alias(book_title)
 
     split_pdf_into_txt(pdf_path, book_alias)
