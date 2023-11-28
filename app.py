@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask import Flask, request, render_template, url_for, redirect, flash
 from sqlalchemy import or_
-
+from sqlalchemy.orm import joinedload
 from extensions import db
 from src.main import send_email
 from web.models import Lecture, LectureCategory, User, Subscription
@@ -85,7 +85,7 @@ def lecture(book_id):
 
         if existing_subscription:
             # The user is already subscribed, so set an error message
-            message = "Esti deja abonat la aceasta lectura."
+            message = "Ești deja abonat la această lectură."
         else:
             # Add subscription to the 'subscription' table
             new_subscription = Subscription(
@@ -99,7 +99,7 @@ def lecture(book_id):
             db.session.commit()
             send_email(email, current_lecture.title, 1, new_subscription.id)
             # After successful subscription, redirect to index or another success page
-            return redirect(url_for('index'))
+            message = "Felicitări! Te-ai abonat la această lectură. Verifică-ți mailul atât în inbox cât și în spam. Spor la citit!"
 
     return render_template('lecture.html', book_id=book_id, lecture=current_lecture, message=message)
 
@@ -108,9 +108,19 @@ def lecture(book_id):
 def send_next_chunk(subscription_id):
     # Fetch the subscription from the database
     subscription = db.session.get(Subscription, subscription_id)
+    lecture_categories = LectureCategory.query.all()
+    category_names = {category.name: category.id for category in lecture_categories}
+
+    genre = request.args.get('genre', default="Toate")
+    if genre in category_names and genre != "Toate":
+        lectures = Lecture.query.filter_by(id_category=category_names[genre]).all()
+    else:
+        lectures = Lecture.query.all()
+        genre = "Toate"
 
     if not subscription:
-        return "Subscription not found!", 404
+        return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories,
+                               selected_genre=genre)
 
     user = subscription.user
     lecture = subscription.lecture
@@ -134,6 +144,14 @@ def send_next_chunk(subscription_id):
     flash(lecture.title + ' partea ' + str(current_chunk+1) + ' / ' + str(lecture.chunks) + ' a fost trimisă!', 'info')
 
     # Return the rendered index page
+
+
+    return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories, selected_genre=genre)
+
+@app.route('/cancel_subscription/<int:subscription_id>', methods=['GET'])
+def cancel_subscription(subscription_id):
+    # Fetch the subscription from the database
+    subscription = db.session.query(Subscription).options(joinedload(Subscription.lecture)).get(subscription_id)
     lecture_categories = LectureCategory.query.all()
     category_names = {category.name: category.id for category in lecture_categories}
 
@@ -143,9 +161,20 @@ def send_next_chunk(subscription_id):
     else:
         lectures = Lecture.query.all()
         genre = "Toate"
+    if not subscription:
+        return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories,
+                               selected_genre=genre)
 
+    # Delete the subscription from the database
+    db.session.delete(subscription)
+    db.session.commit()
+
+    # Flash a message to the user that will be displayed in a removable dialog
+    flash('Subscripția ta pentru ' + subscription.lecture.title + ' a fost anulată.', 'info')
+
+    # Return the rendered index page
+    # Redirect the user to the home page or to a confirmation page
     return render_template('index.html', lectures=lectures, lecture_categories=lecture_categories, selected_genre=genre)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

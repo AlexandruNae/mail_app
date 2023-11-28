@@ -3,8 +3,16 @@ import PyPDF2
 from src.utils import title_to_alias
 
 import fitz  # PyMuPDF
-from src.utils import title_to_alias
+# from src.utils import title_to_alias
 
+def title_to_alias(input_text):
+    title_underscores = input_text.lower().replace("-", "_").replace(" ", "_")
+    parts = title_underscores.split('_', 5)
+    # If we have less than 6 parts, it means there weren't 5 underscores, return the original string
+    if len(parts) < 6:
+        return title_underscores
+    # Join the parts back together with underscores
+    return '_'.join(parts[:5])
 
 def normalize_page_content(page_content, max_words_per_line=15):
     words = page_content.split()
