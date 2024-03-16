@@ -1,17 +1,14 @@
-from flask_sqlalchemy.session import Session
-from sqlalchemy import create_engine
-import smtplib
+import json
 import os
+
 import pandas as pd
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
-import smtplib
-import ssl
 # from config import WEBSITE_URL
 # from src.utils import title_to_alias
 import requests
+from flask_sqlalchemy.session import Session
+from sqlalchemy import create_engine
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 
@@ -118,9 +115,22 @@ def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
 
     url = "https://api.zeptomail.eu/v1.1/email"
 
-    payload = ("{\n\"from\": { \"address\": \"noreply@microlecturi.ro\"},\n\"to\": [{\"email_address\": {\"address\": "
-               "\"" + user_email + "\",\"name\": \"Micro\"}}],\n\"subject\":\"Test Email\","
-               "\n\"htmlbody\":\"<div><b>" + email_body + "</b></div>\"\n}")
+    payload_dict = {
+        "from": {
+            "address": "noreply@microlecturi.ro"
+        },
+        "to": [{
+            "email_address": {
+                "address": user_email,
+                "name": "Micro"
+            }
+        }],
+        "subject": f"{book_title} - Partea {current_chunk} / {chunks}",
+        "htmlbody": email_body  # Assuming email_body is a string containing HTML
+    }
+
+    payload = json.dumps(payload_dict)
+
     headers = {
         'accept': "application/json",
         'content-type': "application/json",
@@ -130,12 +140,12 @@ def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
     }
 
     response = requests.request("POST", url, data=payload, headers=headers)
-
+    # print(response)
 
 def update_send():
     # Query database to get subscriptions
     query = "SELECT user.email, user.enabled, subscription.current_chunk, " \
-            "lecture.title,  subscription.id as subscription_id " \
+            "lecture.title,  subscription.id as subscription_id, subscription.id_lecture as book_id " \
             "FROM subscription " \
             "JOIN user ON subscription.id_user = user.id " \
             "JOIN lecture ON subscription.id_lecture = lecture.id " \
@@ -149,10 +159,11 @@ def update_send():
         enabled = row['enabled']
         subscription_id = row['subscription_id']
         book_title = row['title']
+        book_id = row['book_id']
 
         if enabled == 1:
 
-            send_email(user_email, book_title, current_chunk + 1, subscription_id)
+            send_email(user_email, book_title, current_chunk + 1, subscription_id, book_id)
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
