@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 
 from flask import Flask, request, render_template, url_for, redirect, flash
@@ -11,6 +13,9 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.secret_key = 'WYrsO2sH^vsW4n90pf?T#mG[}^X}dC'
 db.init_app(app)
+
+
+logger = logging.getLogger(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -96,8 +101,16 @@ def lecture(book_id):
                 is_active=True
             )
             db.session.add(new_subscription)
+            db.session.flush()
             db.session.commit()
-            send_email(email, current_lecture.title, 1, new_subscription.id)
+            try:
+                send_email(email, current_lecture.title, 1, new_subscription.id, book_id)
+            except Exception as e:
+                logger.error(e)
+                new_subscription.current_chunk = 0
+                db.session.commit()
+                # todo send alex robert virgil mail nae baldovin dumitru
+
             # After successful subscription, redirect to index or another success page
             message = "Felicitări! Te-ai abonat la această lectură. Verifică-ți mailul atât în inbox cât și în spam. Spor la citit!"
 

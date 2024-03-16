@@ -47,7 +47,7 @@ def get_content(book_title, chunk_number):
         return f.read()
     # return ''
 
-def send_email(user_email, book_title, current_chunk, subscription_id):
+def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
     if not check_if_book_finished(book_title, current_chunk):
         return
     # SMTP settings
@@ -78,7 +78,7 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         email_template = template_file.read()
 
     # Replace placeholders in the template with actual content
-    chunks = get_lecture_chunks_from_subscription(subscription_id)
+    chunks = get_lecture_chunks_from_subscription(book_id)
 
     email_body = email_template.format(
         book_title=book_title,
@@ -170,17 +170,16 @@ def update_send():
                     connection.rollback()
 
 
-def get_lecture_chunks_from_subscription(subscription_id):
+def get_lecture_chunks_from_subscription(lecture_id):
     session = Session()
     try:
         subscription_query = text("""
             SELECT lecture.chunks
-            FROM subscription
-            JOIN lecture ON subscription.id_lecture = lecture.id
-            WHERE subscription.id = :subscription_id
+            FROM lecture
+            WHERE lecture.id = :lecture_id
         """)
 
-        result = session.execute(subscription_query, {'subscription_id': subscription_id}).fetchone()
+        result = session.execute(subscription_query, {'lecture_id': lecture_id}).fetchone()
         session.close()
 
         # Check if the query returned a result
@@ -188,7 +187,7 @@ def get_lecture_chunks_from_subscription(subscription_id):
             # Since 'fetchone' returns a tuple, you can access the first element directly
             return result[0]
         else:
-            print(f"No lecture chunks found for subscription ID {subscription_id}")
+            print(f"No lecture chunks found for lecture ID {lecture_id}")
             return None
 
     except SQLAlchemyError as e:
