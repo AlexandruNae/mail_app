@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 
 import pandas as pd
 # from config import WEBSITE_URL
@@ -10,7 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-
+logger = logging.getLogger(__name__)
 
 def title_to_alias(input_text):
     title_underscores = input_text.lower().replace("-", "_").replace(" ", "_")
@@ -55,10 +56,10 @@ def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
     if not check_if_book_finished(book_title, current_chunk):
         return
     # SMTP settings
-    smtp_server = "smtp.zoho.eu"
-    smtp_port = 587
-    smtp_user = "contact@microlecturi.ro"
-    smtp_password = "Pitagora007#123"
+    # smtp_server = "smtp.zoho.eu"
+    # smtp_port = 587
+    # smtp_user = "contact@microlecturi.ro"
+    # smtp_password = "Pitagora007#123"
 
     # Retrieve the content for the current chunk of the book
     content = get_content(book_title, current_chunk)
@@ -113,24 +114,32 @@ def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
     #     server.login(smtp_user, smtp_password)  # Log in to the SMTP server
     #     server.sendmail(f'Micro Lecturi <{smtp_user}>', user_email, msg.as_string())
 
+    subject = f"{book_title} - Partea {current_chunk} / {chunks}"
+    response = send_email_to_user(email_body, user_email, subject)
+    if not response.ok:
+        logger.error(f"Request failed with status code {response.status_code}: {response.text}")
+        # If not successful, throw an error with details
+        raise Exception(f"Request failed with status code {response.status_code}: {response.text}")
+    # print(response)
+
+
+def send_email_to_user(email_body, user_email, email_subject):
     url = "https://api.zeptomail.eu/v1.1/email"
 
     payload_dict = {
         "from": {
-            "address": "noreply@microlecturi.ro"
+            "address": "noreply@microlecturi.ro",
+            "name": "Micro Lecturi"
         },
         "to": [{
             "email_address": {
                 "address": user_email,
-                "name": "Micro"
             }
         }],
-        "subject": f"{book_title} - Partea {current_chunk} / {chunks}",
+        "subject": email_subject,
         "htmlbody": email_body  # Assuming email_body is a string containing HTML
     }
-
     payload = json.dumps(payload_dict)
-
     headers = {
         'accept': "application/json",
         'content-type': "application/json",
@@ -138,9 +147,9 @@ def send_email(user_email, book_title, current_chunk, subscription_id, book_id):
                          "yA6KbHsM6QyhxjkGQ0k91sWKpd1lr6xo2yq14S3rK8YnKdi1j6E51xplJNe6JmTf0IaA6foCbNkTdtu"
                          "/uN5WLZc3YddQKJTGTuv4P2uV48xh8ciEYNYvjZqgArIVFK9JchggCis4RfkoWA==",
     }
-
     response = requests.request("POST", url, data=payload, headers=headers)
-    # print(response)
+    return response
+
 
 def update_send():
     # Query database to get subscriptions

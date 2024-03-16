@@ -6,7 +6,7 @@ from flask import Flask, request, render_template, url_for, redirect, flash
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 from extensions import db
-from src.main import send_email
+from src.main import send_email, send_email_to_user
 from web.models import Lecture, LectureCategory, User, Subscription
 
 app = Flask(__name__)
@@ -109,7 +109,6 @@ def lecture(book_id):
                 logger.error(e)
                 new_subscription.current_chunk = 0
                 db.session.commit()
-                # todo send alex robert virgil mail nae baldovin dumitru
 
             # After successful subscription, redirect to index or another success page
             message = "Felicitări! Te-ai abonat la această lectură. Verifică-ți mailul atât în inbox cât și în spam. Spor la citit!"
@@ -151,7 +150,7 @@ def send_next_chunk(subscription_id):
     db.session.commit()
 
     # Send an email with the new chunk
-    send_email(user.email, lecture.title, current_chunk + 1, subscription_id)
+    send_email(user.email, lecture.title, current_chunk + 1, subscription_id, lecture.id)
 
     # Flash a message to the user that will be displayed in a removable dialog
     flash(lecture.title + ' partea ' + str(current_chunk+1) + ' / ' + str(lecture.chunks) + ' a fost trimisă!', 'info')
