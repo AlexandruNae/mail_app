@@ -11,8 +11,10 @@ import smtplib
 import ssl
 # from config import WEBSITE_URL
 # from src.utils import title_to_alias
-
+import requests
 from sqlalchemy.orm import sessionmaker
+
+
 def title_to_alias(input_text):
     title_underscores = input_text.lower().replace("-", "_").replace(" ", "_")
     parts = title_underscores.split('_', 5)
@@ -21,11 +23,15 @@ def title_to_alias(input_text):
         return title_underscores
     # Join the parts back together with underscores
     return '_'.join(parts[:5])
+
+
 WEBSITE_URL = " https://www.microlecturi.ro"
 engine = create_engine('mysql+pymysql://root:Pitagora007#1@localhost:3306/micro_lecturi')
 
 # Create a configured "Session" class
 Session = sessionmaker(bind=engine)
+
+
 # Create a SQLAlchemy engine
 
 
@@ -46,6 +52,7 @@ def get_content(book_title, chunk_number):
     with open(f'lectures/{book_alias}/{book_alias}_{chunk_number}.txt', 'r') as f:
         return f.read()
     # return ''
+
 
 def send_email(user_email, book_title, current_chunk, subscription_id):
     if not check_if_book_finished(book_title, current_chunk):
@@ -92,22 +99,37 @@ def send_email(user_email, book_title, current_chunk, subscription_id):
         chunks=chunks
     )
 
-    # Create the email message
-    msg = MIMEMultipart('alternative')
-    msg['From'] = f'Micro Lecturi <{smtp_user}>'
-    msg['To'] = user_email
-    msg['Subject'] = f"{book_title} - Partea {current_chunk} / {chunks}"
+    # # Create the email message
+    # msg = MIMEMultipart('alternative')
+    # msg['From'] = f'Micro Lecturi <{smtp_user}>'
+    # msg['To'] = user_email
+    # msg['Subject'] = f"{book_title} - Partea {current_chunk} / {chunks}"
+    #
+    # # Attach the HTML content
+    # msg.attach(MIMEText(email_body, 'html'))
+    #
+    # # Send the email using SMTP
+    # with smtplib.SMTP(smtp_server, smtp_port) as server:
+    #     server.ehlo()  # Identify ourselves to the SMTP server
+    #     server.starttls()  # Secure the SMTP connection
+    #     server.ehlo()  # Re-identify ourselves over the secure connection
+    #     server.login(smtp_user, smtp_password)  # Log in to the SMTP server
+    #     server.sendmail(f'Micro Lecturi <{smtp_user}>', user_email, msg.as_string())
 
-    # Attach the HTML content
-    msg.attach(MIMEText(email_body, 'html'))
+    url = "https://api.zeptomail.eu/v1.1/email"
 
-    # Send the email using SMTP
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.ehlo()  # Identify ourselves to the SMTP server
-        server.starttls()  # Secure the SMTP connection
-        server.ehlo()  # Re-identify ourselves over the secure connection
-        server.login(smtp_user, smtp_password)  # Log in to the SMTP server
-        server.sendmail(f'Micro Lecturi <{smtp_user}>', user_email, msg.as_string())
+    payload = ("{\n\"from\": { \"address\": \"noreply@microlecturi.ro\"},\n\"to\": [{\"email_address\": {\"address\": "
+               "\"" + user_email + "\",\"name\": \"Micro\"}}],\n\"subject\":\"Test Email\","
+               "\n\"htmlbody\":\"<div><b>" + email_body + "</b></div>\"\n}")
+    headers = {
+        'accept': "application/json",
+        'content-type': "application/json",
+        'authorization': "Zoho-enczapikey "
+                         "yA6KbHsM6QyhxjkGQ0k91sWKpd1lr6xo2yq14S3rK8YnKdi1j6E51xplJNe6JmTf0IaA6foCbNkTdtu"
+                         "/uN5WLZc3YddQKJTGTuv4P2uV48xh8ciEYNYvjZqgArIVFK9JchggCis4RfkoWA==",
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
 
 
 def update_send():
@@ -130,7 +152,7 @@ def update_send():
 
         if enabled == 1:
 
-            send_email(user_email, book_title, current_chunk+1, subscription_id)
+            send_email(user_email, book_title, current_chunk + 1, subscription_id)
 
             # Update current_chunk in database update_query = f"""UPDATE subscription SET current_chunk = {current_chunk
             # + 1} WHERE id_user = (SELECT id FROM user WHERE email = '{user_email}') AND id_lecture = (SELECT id FROM
